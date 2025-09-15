@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Invoice</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Arial", sans-serif;
+        font-size: 14px;
+        line-height: 1.6;
+        color: #333;
+        background-color: #fff;
+        padding: 20px;
+      }
+
+      .invoice-container {
+        max-width: 1000px; /* Increased from 800px to accommodate wider content */
+        margin: 0 auto;
+        background: white;
+        padding: 30px;
+        border: 1px solid #ddd;
+      }
+
+      .invoice-header {
+        text-align: center;
+        margin-bottom: 30px;
+        border-bottom: 3px solid #007bff;
+        padding-bottom: 15px;
+      }
+
+      .invoice-title {
+        font-size: 28px;
+        font-weight: bold;
+        color: #007bff;
+        margin-bottom: 8px;
+      }
+
+      .invoice-number {
+        font-size: 14px;
+        color: #666;
+      }
+
+      .parties-section {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 25px;
+        gap: 30px;
+      }
+
+      .party-info {
+        flex: 1;
+      }
+
+      .party-title {
+        font-size: 16px;
+        font-weight: bold;
+        color: #007bff;
+        margin-bottom: 8px;
+        border-bottom: 2px solid #007bff;
+        padding-bottom: 3px;
+      }
+
+      .party-details {
+        line-height: 1.6;
+      }
+
+      .party-details div {
+        margin-bottom: 3px;
+      }
+
+      .invoice-meta {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 25px;
+        padding: 12px;
+        background-color: #f8f9fa;
+        border-radius: 5px;
+      }
+
+      .meta-item {
+        text-align: center;
+      }
+
+      .meta-label {
+        font-weight: bold;
+        color: #666;
+        font-size: 11px;
+        text-transform: uppercase;
+      }
+
+      .meta-value {
+        font-size: 14px;
+        color: #333;
+        margin-top: 3px;
+      }
+
+      .status {
+        padding: 4px 12px;
+        border-radius: 15px;
+        font-weight: bold;
+        text-transform: uppercase;
+        font-size: 10px;
+      }
+
+      .status.draft {
+        background-color: #ffc107;
+        color: #856404;
+      }
+
+      .status.sent {
+        background-color: #17a2b8;
+        color: #0c5460;
+      }
+
+      .status.paid {
+        background-color: #28a745;
+        color: #155724;
+      }
+
+      .items-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 25px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .items-table th {
+        background-color: #007bff;
+        color: white;
+        padding: 12px 8px;
+        text-align: left;
+        font-weight: bold;
+        text-transform: uppercase;
+        font-size: 11px;
+        letter-spacing: 0.5px;
+      }
+
+      .items-table th:nth-child(1) {
+        width: 45%;
+      }
+      .items-table th:nth-child(2) {
+        width: 15%;
+        text-align: center;
+      }
+      .items-table th:nth-child(3) {
+        width: 20%;
+        text-align: right;
+      }
+      .items-table th:nth-child(4) {
+        width: 20%;
+        text-align: right;
+      }
+
+      .items-table td {
+        padding: 12px 8px;
+        border-bottom: 1px solid #eee;
+        vertical-align: top;
+      }
+
+      .items-table tbody tr:hover {
+        background-color: #f8f9fa;
+      }
+
+      .items-table tbody tr:last-child td {
+        border-bottom: 2px solid #007bff;
+      }
+
+      .item-description {
+        font-weight: 500;
+        color: #333;
+      }
+
+      .item-quantity {
+        text-align: center;
+        font-weight: bold;
+      }
+
+      .item-price,
+      .item-total {
+        text-align: right;
+        font-weight: bold;
+        color: #333;
+      }
+
+      .totals-section {
+        margin-left: auto;
+        width: 280px;
+        margin-top: 15px;
+      }
+
+      .totals-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid #eee;
+      }
+
+      .totals-row.subtotal {
+        font-size: 14px;
+      }
+
+      .totals-row.tax {
+        font-size: 14px;
+        color: #666;
+      }
+
+      .totals-row.total {
+        font-size: 18px;
+        font-weight: bold;
+        color: #007bff;
+        border-bottom: 3px solid #007bff;
+        border-top: 2px solid #007bff;
+        padding: 12px 0;
+        margin-top: 8px;
+      }
+
+      .currency {
+        font-weight: bold;
+      }
+
+      .footer {
+        margin-top: 40px;
+        text-align: center;
+        padding-top: 15px;
+        border-top: 1px solid #ddd;
+        color: #666;
+        font-size: 11px;
+      }
+
+      .thank-you {
+        font-size: 16px;
+        color: #007bff;
+        font-weight: bold;
+        margin-bottom: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="invoice-container">
+      <!-- Header -->
+      <div class="invoice-header">
+        <div class="invoice-title">INVOICE</div>
+        <div class="invoice-number">#{{invoiceNumber}}</div>
+      </div>
+
+      <!-- Parties Information -->
+      <div class="parties-section">
+        <div class="party-info">
+          <div class="party-title">Bill From</div>
+          <div class="party-details">
+            <div><strong>{{biller.companyName}}</strong></div>
+            <div>{{biller.email}}</div>
+            <div>{{biller.phone}}</div>
+            <div>{{biller.address}}</div>
+          </div>
+        </div>
+
+        <div class="party-info">
+          <div class="party-title">Bill To</div>
+          <div class="party-details">
+            <div><strong>{{client.companyName}}</strong></div>
+            <div>{{client.email}}</div>
+            <div>{{client.phone}}</div>
+            <div>{{client.address}}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Invoice Meta Information -->
+      <div class="invoice-meta">
+        <div class="meta-item">
+          <div class="meta-label">Invoice Date</div>
+          <div class="meta-value">{{invoiceDate}}</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-label">Due Date</div>
+          <div class="meta-value">{{dueDate}}</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-label">Status</div>
+          <div class="meta-value">
+            <span class="status {{status}}">{{status}}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Items Table -->
+      <table class="items-table">
+        <thead>
+          <tr>
+            <th>Description</th>
+            <th>Qty</th>
+            <th>Unit Price</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{itemsHTML}}
+        </tbody>
+      </table>
+
+      <!-- Totals Section -->
+      <div class="totals-section">
+        <div class="totals-row subtotal">
+          <span>Subtotal:</span>
+          <span><span class="currency">₹</span>{{subtotal}}</span>
+        </div>
+        <div class="totals-row tax">
+          <span>GST ({{taxRate}}%):</span>
+          <span><span class="currency">₹</span>{{tax}}</span>
+        </div>
+        <div class="totals-row total">
+          <span>Total Amount:</span>
+          <span><span class="currency">₹</span>{{totalAmount}}</span>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="footer">
+        <div class="thank-you">Thank you for your business!</div>
+        <div>This is a computer-generated invoice.</div>
+      </div>
+    </div>
+  </body>
+</html>
